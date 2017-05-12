@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>markdown</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 引入marked.js，lodash.js -->
+  <script src="https://unpkg.com/marked@0.3.6"></script>
+  <script src="https://unpkg.com/lodash@4.16.0"></script>
+  <script src="../libs/vue.js"></script>
+</head>
+
+<body>
+  <div id="editor">
+    <textarea :value="input" @input="update" cols="30" rows="10"></textarea>
+    <div v-html="compilerMd"></div>
+  </div>
+</body>
+<script>
+  new Vue({
+    el: '#editor',
+    data: {
+      input: '# hello'
+    },
+    computed: {
+      compilerMd: function() {
+        // marked函数处理输入内容
+        return marked(this.input, {
+          sanitize: true
+        })
+      }
+    },
+    methods: {
+      // 防抖动函数，300ms更换一次input
+      update: _.debounce(function(e) {
+        this.input = e.target.value
+      }, 300)
+    }
+  })
+</script>
+
+</html>
