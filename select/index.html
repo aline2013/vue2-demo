@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Vue.js wrapper component example (jquery plugin: select2)</title>
+  <!-- Delete ".min" for console warnings in development -->
+  <script src="../libs/vue.js"></script>
+  <script src="https://unpkg.com/jquery"></script>
+  <!--select2是Jquery用来代替选择框的一种组件。它让你可以定制下拉框，并且支持搜索、标记，远程数据源，无限滚动和其他更高级的功能-->
+  <script src="https://unpkg.com/select2@4.0.3"></script>
+  <link href="https://unpkg.com/select2@4.0.3/dist/css/select2.min.css" rel="stylesheet">
+  <style>
+    html,
+    body {
+      font: 13px/18px sans-serif;
+    }
+    
+    select {
+      min-width: 300px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="el">
+  </div>
+
+  <script id="demo-template" type="text/x-template">
+    <div>
+      <p>selected:{{selected}}</p>
+      <select2 :options="options" v-model="selected">
+        <options disable value="0"> select one </options>
+      </select2>
+    </div>
+  </script>
+
+  <script id="select2-template" type="text/x-template">
+    <select>
+      <slot></slot>
+    </select>
+  </script>
+
+  <script>
+    Vue.component('select2', {
+      props: ['options', 'value'],
+      template: '#select2-template',
+      mounted: function() {
+        var vm = this;
+        $(this.$el)
+          .val(this.value)
+          .select2({
+            data: this.options
+          })
+          .on('change', function() {
+            vm.$emit('input', this.value)
+          })
+      },
+      watch: {
+        value: function(value) {
+          $(this.$el).val(value).trigger('change')
+        },
+        options: function(options) {
+          $(this.$el).select2({
+            data: options
+          })
+        }
+      },
+      destroyed: function() {
+        $(this.$el).off().select2('destroy')
+      }
+    })
+
+    var vm = new Vue({
+      el: '#el',
+      template: '#demo-template',
+      data: {
+        selected: 0,
+        options: [{
+          id: 1,
+          text: 'hello'
+        }, {
+          id: 2,
+          text: world
+        }]
+      }
+    })
+  </script>
+</body>
+
+</html>

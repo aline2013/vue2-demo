@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>grid</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="../libs/vue.js"></script>
+</head>
+
+<body>
+  <script id="grid-template" type="text/x-template">
+    <table v-if="filteredData.length">
+      <thead>
+        <tr>
+          <th v-for="key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
+            {{ key | capitalize }}
+            <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="entry in filteredData">
+          <td v-for="key in columns">{{entry[key]}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-else>No matches found.</p>
+  </script>
+  <div id="demo">
+    <form id="search">
+      search <input type="text" name="query" v-model="searchQuery">
+    </form>
+    <demo-grid :data="gridData" :columns="gridColumns" :filter-key="searchQuery"></demo-grid>
+  </div>
+</body>
+<script src="index.js"></script>
+
+</html>
